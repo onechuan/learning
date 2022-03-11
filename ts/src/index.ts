@@ -6,3 +6,4 @@ export function sum(num1:number,num2:number):number{
 }
 const num = 12
 console.log(sum(1,2));
+
