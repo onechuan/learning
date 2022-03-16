@@ -94,6 +94,12 @@ const tomato: ITomato = [1,2,3]
 const potato: ITomato = {1:2,2:2}
 
 
+// 可以用接口来描述实例
 
+// 单例模式
+let instance;
+function createInstance(){
+    
+}
 
 export{}
