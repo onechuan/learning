@@ -33,3 +33,14 @@ let u: unknown = 1;//unknown不能通过属性变量取值，为了安全性
 type x = boolean & unknown
 
 // keyof any 但是不能使用keyof unknown
+
+interface IUser{
+    name:string
+    age:number
+}
+
+interface IStudent{
+    university: string
+}
+
+interface IPerson = IUser | IStudent;
