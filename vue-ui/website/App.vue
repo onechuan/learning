@@ -1,5 +1,4 @@
 <template>
     <oc-button></oc-button>
-    <oc-icon></oc-icon>
-   
+    <oc-icon name="loading"></oc-icon>
 </template>

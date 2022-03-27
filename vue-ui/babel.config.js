@@ -1,7 +1,22 @@
 module.exports = {
-    presets:[
-        // 需要配置babel解析的预设，反着执行
-        "@babel/preset-env",
-        "@babel/preset-typescript"
-    ]
+    presets: [
+        '@babel/preset-env',
+        "@babel/preset-typescript" // 解析ts语法，在采用preset-env
+    ],
+    overrides: [{
+        test: /\.vue$/,
+        plugins: [ // ?
+            '@babel/transform-typescript',
+        ],
+    }],
+    env: {
+        utils: {
+            plugins: [ // ?
+                [
+                    'babel-plugin-module-resolver', // 为了能正确找到z-ui模块
+                    { root: 'oc-ui' }
+                ]
+            ]
+        }
+    }
 }

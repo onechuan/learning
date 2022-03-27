@@ -13,7 +13,7 @@
     "packages/*"
   ],
   "scripts": {
-    "website-dev":"webpack serve --config ./website/webpack.config.js"
+    "website-dev": "webpack serve --config ./website/webpack.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.17.7",
@@ -24,6 +24,10 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-dart-sass": "^1.0.2",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
     "sass": "^1.49.9",

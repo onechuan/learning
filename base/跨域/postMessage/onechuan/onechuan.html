@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <iframe src="http://localhost:3001/pingping.html"  frameborder="0" id="frame" onload="load()"></iframe>
+    <script>
+        function load(){
+            const frame = document.getElementById("frame");
+            frame.contentWindow.postMessage("i love u pingping", "http://localhost:3001")
+            window.onmessage = (e)=>{
+                console.log(e.data);
+            }
+        }
+    </script>
+</body>
+</html>

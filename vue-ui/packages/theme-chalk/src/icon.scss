@@ -1,0 +1,36 @@
+@import url("./common/var.scss");
+@font-face {
+    font-family: "oc-ui-icons"; /* Project id 3261536 */
+    src: url('./fonts/iconfont.woff2') format('woff2'),
+         url('./fonts/iconfont.woff') format('woff'),
+         url('./fonts/iconfont.ttf') format('truetype');
+}
+
+[class^="#{$namespace}-icon-"] {
+    font-family: "oc-ui-icons" !important;
+    font-size: 16px;
+    display: inline-block;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.oc-icon-loading:before {
+    content: "\e627";
+}
+
+@keyframes rotate{
+    from{
+        transform: rotateZ(0deg);
+        opacity: 0;
+    }
+    to{
+        transform: rotateZ(180deg);
+        opacity: 1;
+    }
+}
+
+.oc-icon-loading{
+    animation:rotate 1.5s linear infinite;
+}
+  

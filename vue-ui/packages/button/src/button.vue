@@ -4,7 +4,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-    name:"OCButton"
+    name:"OcButton"
 })
 </script>
 <style></style>

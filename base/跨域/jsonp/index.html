@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+function jsonp({url, params,cb}){
+    return new Promise((resolve,reject)=>{
+        
+        params = {...params, cb} //wd=yichuan_i_love_you&cb=show
+        let arrs = [];
+        for(let key in params){
+            arrs.push(`${key}=${params[key]}`)
+        }
+        let script = document.createElement("script");
+        script.src = `${url}?${arrs.join("&")}`;
+        document.body.appendChild(script);
+        window[cb] = function(data){
+            try{
+                resolve(data)
+            }catch(e){
+                reject(e)
+            }finally{
+                // 最后要移除此标签
+                script.parentNode.removeChild(script);
+            }
+        }
+    })
+}
+// 只能发送get请求，不支持post put delete
+// 不安全，容易被xss攻击
+jsonp({
+    url:"http://localhost:3000/say",
+    params:{wd:"yichuan_i_love_you"},
+    cb:"show"
+}).then(data=>{
+    console.log(data);
+})
+    </script>
+</body>
+</html>
