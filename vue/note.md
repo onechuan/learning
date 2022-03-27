@@ -11,7 +11,7 @@
 - 增加了Fragment、Teleport、Suspense组件
 
 ## Vue3架构分析
-### 1.Mo
+### 1.Monorepo思想
 
 ### 2.Vue3项目结构
 - reactive：响应式系统
@@ -27,3 +27,20 @@
 - template-explore：用于调试编译器输出的开发工具
 - shared：多个包之间的共享内容
 - vue：完整版本，包括运行时和编译时
+
+### 3.安装依赖
+
+```shell
+yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve @rollup/plugin-json execa -W
+```
+加-W的作用是让起安装在根目录下，而非各个子目录中。
+
+最外层根目录下的package.json是用于管理整个项目下的包进行管理，而各个子模块的package.json是分别管理对应包下的文件。
+|依赖|作用|
+|-|-|
+|typescript|支持typescript|
+|rollup|打包工具|
+|rollup-plugin-typescript|rollup和ts的桥梁|
+|@rollup/plugin-node-resolve|解析node第三方模块|
+|@rollup/plugin-json|支持引入json|
+|execa|开发子进程方便执行命令|
