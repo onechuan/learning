@@ -31,7 +31,7 @@
 ### 3.安装依赖
 
 ```shell
-yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve @rollup/plugin-json execa -W
+yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve @rollup/plugin-json execa@4 -W
 ```
 加-W的作用是让起安装在根目录下，而非各个子目录中。
 
@@ -43,4 +43,6 @@ yarn add typescript rollup rollup-plugin-typescript2 @rollup/plugin-node-resolve
 |rollup-plugin-typescript|rollup和ts的桥梁|
 |@rollup/plugin-node-resolve|解析node第三方模块|
 |@rollup/plugin-json|支持引入json|
-|execa|开发子进程方便执行命令|
+|execa@4|开发子进程方便执行命令|
+
+## package.json中workspaces的配置是给yarn设置软链

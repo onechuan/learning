@@ -1,3 +1,14 @@
-const reactivity = {}
+// 导出方法 不实现功能
 
-export default reactivity
+export {
+    reactive,
+    shallowReactive,
+    readonly,
+    shallowReadonly,
+} from "./reactive";
+
+export {
+    effect
+} from "./effect"
+
+
