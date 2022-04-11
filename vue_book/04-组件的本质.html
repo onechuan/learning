@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const MyComponent = function(){
+            return {
+                tag:"div",
+                props:{
+                    onClick: ()=>console.log("hello world")
+                },
+                children:"click me"
+            }
+        }
+
+        const vnode = {
+            tag: MyComponent
+        }
+
+        
+
+        renderer(vnode, document.body)
+
+        function renderer(vnode, container){
+            // 判断是标签元素还是组件
+            if(typeof vnode.tag === "string"){
+                // 如果是字符串，直接作为元素的标签元素
+                mountElement(vnode, container)
+            }else{
+                mountComponent(vnode, container)
+            }
+
+           
+        }
+        // 渲染元素
+        function mountElement(vnode, container){
+            // 使用vnode.tag 作为标签名称创建DOM元素
+            const el = document.createElement(vnode.tag)
+            // 遍历vnode的props作为DOM元素的属性和事件
+            for(const key in vnode.props){
+                if(/^on/.test(key)){
+                    // 如果key以on开头，这说明他是一个事件
+                    el.addEventListener(
+                        key.substring(2).toLowerCase(),//事件名称将onClick-->click
+                        vnode.props[key]//事件处理函数
+                    )
+                }
+            }
+
+            // 处理children
+            if(typeof vnode.children === "string"){
+                // 如果是字符串，直接作为元素的文本子节点
+                el.appendChild(document.createTextNode(vnode.children))
+            }else if(Array.isArray(vnode.children)){
+                // 递归调用renderer函数进行渲染子节点，使用当前元素el作为挂载点
+                vnode.children.forEach(child=>renderer(child,el))
+            }
+            // 将元素添加到挂载点
+            container.appendChild(el)
+        }
+    
+        // 渲染组件
+        function mountComponent(vnode, container){
+            // 调用组件函数，获取组件要渲染的内容-虚拟DOM
+            const subtree = vnode.tag()
+            // 递归调用renderer渲染subtree
+            renderer(subtree, container)
+        }
+    </script>
+</body>
+</html>

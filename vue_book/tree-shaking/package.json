@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build":"npx rollup input.js -f esm -o bundle.js"
+  },
+  "devDependencies": {
+    "rollup": "^2.68.0"
+  }
+}

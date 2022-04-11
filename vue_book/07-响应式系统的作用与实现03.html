@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 全局变量用于存储被注册的副作用函数
+        let activeEffect;
+        // 创建存储副作用函数的桶
+        const bucket = new WeakMap();
+        // 原始数据
+        const data = {
+            text:"hello world"
+        }
+
+        // 响应式函数
+        const obj = new Proxy(data,{
+            // 拦截读取操作
+            get(target, key){
+                // 没有activeEffect
+                if(!activeEffect) return
+                // 根据目标对象从桶中获得副作用函数
+                let depsMap = bucket.get(target);
+                // 判断是否存在，不存在则创建一个Map
+                if(!depsMap) bucket.set(target, depsMap = new Map())
+                // 根据key从depsMap取的deps，存储着与key相关的副作用函数
+                let deps = depsMap.get(key);
+                // 判断key对应的副作用函数是否存在
+                if(!deps) depsMap.set(key, deps = new Set())
+                // 最后将激活的副作用函数添加到桶里
+                deps.add(activeEffect)
+                // 返回属性值
+                return target[key]
+            },
+            // 拦截设值操作
+            set(target, key, newVal){
+                // 设置属性值
+                target[key] = newVal;
+                // 根据target从桶中取的depMaps
+                const depMaps = bucket.get(target);
+                // 判断是否存在
+                if(!depMaps) return
+                // 根据key值取得对应的副作用函数
+                const effects = depMaps.get(key);
+                // 执行副作用函数
+                effects && effects.forEach(fn=>fn())
+            }
+        })
+
+        
+        // effect用于注册副作用函数
+        function effect(fn){
+            // 当调用effect注册副作用函数时，将副作用函数fn赋值给activeEffect
+            activeEffect = fn;
+            // 执行副作用函数
+            fn();
+        }
+        
+
+        effect(()=>{
+            console.log("打印");
+            document.body.innerText = obj.text
+        })
+
+        // 设置一个不存在的属性时
+        setTimeout(()=>{
+            obj.notExist = "hello vue3";
+        },1000)
+    </script>
+</body>
+</html>

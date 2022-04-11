@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div id="app"></div>
+<script>
+//全局变量
+let state = {
+    name:"onechuan",
+    age:18,
+    address:"北京"
+}
+
+// 存储副作用函数的桶
+const bucket = new Set();
+
+// 对原始数据的代理
+const obj = new Proxy(state,{
+    // 拦截读取操作
+    get(target, key){
+        // 将副作用函数effect添加到存储副作用函数的桶中
+        bucket.add(effect)
+        // 返回属性值
+        return target[key]
+    },
+    // 拦截设置操作
+    set(target, key, newVal){
+        // 设置属性值
+        target[key] = newVal
+        // 把副作用函数从桶里取出并执行
+        bucket.forEach(fn=>fn())
+        // 返回true代表设置操作成功
+        return true
+    }
+})
+
+function effect(){
+    const app = document.querySelector("#app");
+    app.innerHTML = obj.name + "，" + obj.age + "，" + obj.address;
+}
+    
+effect();
+
+setTimeout(()=>{
+    //修改全局变量，产生副作用
+    obj.address = "广州";
+},1000)
+
+
+</script>
+</body>
+</html>

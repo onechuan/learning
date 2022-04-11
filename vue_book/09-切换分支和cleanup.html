@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 全局变量用于存储被注册的副作用函数
+        let activeEffect;
+        // 创建存储副作用函数的桶
+        const bucket = new WeakMap();
+        // 原始数据
+        const data = {
+            name:"pingping",
+            age:18,
+            flag:true
+        }
+
+        // 响应式函数
+        const state = new Proxy(data,{
+            // 拦截读取操作
+            get(target, key){
+                // 将副作用函数activeEffect添加到存储副作用函数的WeakMap中
+                track(target, key)
+                // 返回属性值
+                return target[key]
+            },
+            // 拦截设值操作
+            set(target, key, newVal){
+                // 设置属性值
+                target[key] = newVal;
+                // 将副作用函数从WeakMap中取出并执行
+                trigger(target, key)
+            }
+        })
+
+        // 在get拦截函数中调用追踪取值函数的变化
+        function track(target, key){
+            // 没有activeEffect
+            if(!activeEffect) return
+            // 根据目标对象从桶中获得副作用函数
+            let depsMap = bucket.get(target);
+            // 判断是否存在，不存在则创建一个Map
+            if(!depsMap) bucket.set(target, depsMap = new Map())
+            // 根据key从depsMap取的deps，存储着与key相关的副作用函数
+            let deps = depsMap.get(key);
+            // 判断key对应的副作用函数是否存在
+            if(!deps) depsMap.set(key, deps = new Set())
+            // 最后将激活的副作用函数添加到桶里
+            deps.add(activeEffect)
+            // deps是与当前副作用函数存在联系的依赖集合
+            activeEffect.deps.push(deps)
+        }
+
+        // 在set拦截函数中调用trigger函数触发变化
+        function trigger(target, key){
+            // 根据target从桶中取的depMaps
+            const depMaps = bucket.get(target);
+            // 判断是否存在
+            if(!depMaps) return
+            // 根据key值取得对应的副作用函数
+            const effects = depMaps.get(key);
+            const effectsToRun = new Set();
+            // 执行副作用函数
+            effects && effects.forEach(effectFn=>{
+                if(effectFn !== activeEffect){
+                    effectsToRun.add(effectFn)
+                }
+            })
+            effectsToRun.forEach(effectFn=>{
+                // 如果副作用函数中存在调度器
+                if(effectFn.options?.scheduler){
+                    effectFn.options.scheduler(effectFn)
+                }else{
+                    effectFn()
+                }
+            });
+        }
+        
+        let effectStack = [];
+        // effect用于注册副作用函数
+        function effect(fn,options={}){
+            const effectFn = ()=>{
+                // 调用函数完成清理遗留副作用函数
+                cleanupEffect(effectFn)
+                // 当调用effect注册副作用函数时，将副作用函数fn赋值给activeEffect
+                activeEffect = effectFn;
+                // 在副作用函数执行前压栈
+                effectStack.push(effectFn)
+                // 执行副作用函数
+                fn();
+                // 执行完毕后出栈
+                effectStack.pop()
+                activeEffect = effectStack[effectStack.length - 1]
+            }
+            // 将options挂载到effectFn函数上
+            effectFn.options = options
+            //deps是用于存储所有与该副作用函数相关联的依赖集合
+            effectFn.deps = [];
+            // 执行副作用函数effectFn
+            effectFn()
+        }
+
+        // 遗留的副作用函数的清除函数
+        function cleanupEffect(effectFn){          
+            const { deps } = effectFn
+            // 遍历依赖集合数组
+            for(let i = 0; i < deps.length; i++){
+                //从依赖集合中删除
+                deps[i].delete(effectFn)
+            }
+            // 重置数组
+            deps.length = 0
+        }
+        //全局变量
+        let temp1, temp2;
+        //effectFn1嵌套effectFn2
+        // effect(()=>{
+        //     console.log("执行effectFn1");
+        //     effect(()=>{
+        //         console.log("执行effectFn2");
+        //         //在effectFn2中读取state.name属性
+        //         temp2 = state.name;
+        //     })
+        //     //在effectFn1中读取state.age属性
+        //     temp1 = state.age;
+        // })
+
+        // setTimeout(()=>{
+        //     state.age = 19
+        // },1000)
+
+        // effect(()=>{
+        //     state.age++
+        // })
+
+        // effect(()=>{
+        //     console.log("render1");
+        //     document.body.innerHTML = state.flag ? state.name : state.age
+        // })
+        // effect(()=>{
+        //     console.log("render2");
+        //     document.body.innerHTML = state.flag ? state.name : state.age
+        // })
+
+        // 设置一个不存在的属性时
+        // setTimeout(()=>{
+        //     state.flag = false;
+        //     setTimeout(()=>{
+        //         console.log("更改了name的值，理论上是不会更新页面数据的...");
+        //         state.name = "onechuan"
+        //     })
+        // },1000)
+
+        effect(()=>{
+            console.log(state.age);
+        });
+
+        state.age++;
+        state.age++;
+
+        console.log("run end");
+    </script>
+</body>
+</html>
