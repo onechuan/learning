@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script>
+    <script>
+        let {effect, reactive} = VueReactivity;
+        let state = reactive({
+            name:"pingping",
+            age:18,
+            flag:true
+        });
+        effect(()=>{
+            console.log("render");
+            document.body.innerHTML = state.flag ? state.name : state.age
+        })
+
+        setTimeout(()=>{
+            state.flag = false;
+            setTimeout(()=>{
+                console.log("更改了name的值，理论上是不会更新页面数据的...");
+                state.name = "onechuan"
+            })
+        },1000)
+    </script>
+</body>
+</html>
